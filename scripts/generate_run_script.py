@@ -83,6 +83,9 @@ def get_query_str(queryfile, label, workers, limit, hostname, extra_query_args):
     elif label == 'timescaledb' or label == 'postgres':
         # TimescaleDB needs the connection string
         extra_args = '--hosts="{}" --postgres="{}"'.format(hostname, 'user=postgres sslmode=disable')
+    elif label == 'influx' or label == 'kusto':
+        if hostname:
+            extra_args = '--urls="{}"'.format(hostname)
 
     return 'cat {} | gunzip | tsbs_run_queries_{} --workers={} {} {} {} | tee {}.out'.format(
         queryfile, benchmarker, workers, limit_arg, extra_args, extra_query_args, output_file)

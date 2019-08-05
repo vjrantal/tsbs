@@ -231,6 +231,9 @@ func (g *DataGenerator) getSerializer(sim common.Simulator, format string) (seri
 	case FormatTimescaleDB:
 		g.writeHeader(sim)
 		ret = &serialize.TimescaleDBSerializer{}
+	case FormatKusto:
+		g.writeHeader(sim)
+		ret = &serialize.CsvSerializer{}
 	default:
 		err = fmt.Errorf(errUnknownFormatFmt, format)
 	}
@@ -239,12 +242,12 @@ func (g *DataGenerator) getSerializer(sim common.Simulator, format string) (seri
 }
 
 func (g *DataGenerator) writeHeader(sim common.Simulator) {
-	g.bufOut.WriteString("tags")
+	g.bufOut.WriteString("timestamp")
 	for _, key := range sim.TagKeys() {
 		g.bufOut.WriteString(",")
 		g.bufOut.Write(key)
 	}
-	g.bufOut.WriteString("\n")
+	//g.bufOut.WriteString(",")
 	// sort the keys so the header is deterministic
 	keys := make([]string, 0)
 	fields := sim.Fields()
@@ -253,12 +256,12 @@ func (g *DataGenerator) writeHeader(sim common.Simulator) {
 	}
 	sort.Strings(keys)
 	for _, measurementName := range keys {
-		g.bufOut.WriteString(measurementName)
+		//g.bufOut.WriteString(measurementName)
 		for _, field := range fields[measurementName] {
 			g.bufOut.WriteString(",")
 			g.bufOut.Write(field)
 		}
-		g.bufOut.WriteString("\n")
+		//g.bufOut.WriteString("\n")
 	}
 	g.bufOut.WriteString("\n")
 }

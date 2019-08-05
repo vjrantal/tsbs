@@ -5,12 +5,14 @@ import (
 	"encoding/gob"
 	"flag"
 	"fmt"
-	"github.com/timescale/tsbs/cmd/tsbs_generate_queries/databases/cratedb"
 	"io"
 	"math/rand"
 	"os"
 	"sort"
 	"time"
+
+	"github.com/timescale/tsbs/cmd/tsbs_generate_queries/databases/cratedb"
+	"github.com/timescale/tsbs/cmd/tsbs_generate_queries/databases/kusto"
 
 	"github.com/timescale/tsbs/cmd/tsbs_generate_queries/databases/cassandra"
 	"github.com/timescale/tsbs/cmd/tsbs_generate_queries/databases/clickhouse"
@@ -187,6 +189,8 @@ func (g *QueryGenerator) getUseCaseGenerator(c *QueryGeneratorConfig) (utils.Que
 		ret = temp
 	case FormatInflux:
 		ret = influx.NewDevops(g.tsStart, g.tsEnd, scale)
+	case FormatKusto:
+		ret = kusto.NewDevops(g.tsStart, g.tsEnd, scale)
 	case FormatMongo:
 		if c.MongoUseNaive {
 			ret = mongo.NewNaiveDevops(g.tsStart, g.tsEnd, scale)

@@ -7,7 +7,18 @@ if [[ -z "${EXE_FILE_NAME}" ]]; then
     exit 1
 fi
 
-EXE_FILE_VERSION=`md5sum $EXE_FILE_NAME | awk '{ print $1 }'`
+# Checking which binary to use for checksum calculation. Useful to run both on Linux and MacOS.
+# Copied from https://stackoverflow.com/a/7115786.
+md5=$(which md5)
+if [ ! "${md5}" ] ; then
+    md5=$(which md5sum)
+    if [ ! "${md5}" ] ; then
+      echo "Neither md5 nor md5sum found!"
+      exit 1
+    fi
+fi
+
+EXE_FILE_VERSION=`${md5} $EXE_FILE_NAME | awk '{ print $4 }'`
 # Queries folder
 BULK_DATA_DIR=${BULK_DATA_DIR:-"/tmp/bulk_queries"}
 
