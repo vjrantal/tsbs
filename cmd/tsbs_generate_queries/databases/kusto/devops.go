@@ -168,7 +168,7 @@ func (d *Devops) HighCPUForHosts(qi query.Query, nHosts int) {
 
 func (d *Devops) fillInQuery(qi query.Query, humanLabel, humanDesc, kql string) {
 	v := url.Values{}
-	kql = "let cpu = CpuMetrics_v2; " + kql
+	kql = "set notruncation;let cpu = CpuMetrics_v2;" + kql
 	v.Set("csl", kql)
 	q := qi.(*query.HTTP)
 	q.HumanLabel = []byte(humanLabel)
