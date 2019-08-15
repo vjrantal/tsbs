@@ -125,7 +125,7 @@ func TestDevopsGroupByTime(t *testing.T) {
 	expectedQuery := "SELECT max(usage_user) from cpu " +
 		"where (hostname = 'host_9') and " +
 		"time >= '1970-01-01T00:05:58Z' and time < '1970-01-01T00:05:59Z' " +
-		"group by time(1m)"
+		"group by time(1m) order by time asc"
 
 	v := url.Values{}
 	v.Set("q", expectedQuery)
@@ -182,7 +182,7 @@ func TestDevopsGroupByTimeAndPrimaryTag(t *testing.T) {
 			expectedHumanDesc:  "Influx mean of 1 metrics, all hosts, random 12h0m0s by 1h: 1970-01-01T00:16:22Z",
 			expectedQuery: "SELECT mean(usage_user) from cpu " +
 				"where time >= '1970-01-01T00:16:22Z' and time < '1970-01-01T12:16:22Z' " +
-				"group by time(1h),hostname",
+				"group by time(1h),hostname order by time",
 		},
 		{
 			desc:               "5 metrics",
@@ -192,7 +192,7 @@ func TestDevopsGroupByTimeAndPrimaryTag(t *testing.T) {
 			expectedQuery: "SELECT mean(usage_user), mean(usage_system), mean(usage_idle), mean(usage_nice), mean(usage_iowait) " +
 				"from cpu " +
 				"where time >= '1970-01-01T00:54:10Z' and time < '1970-01-01T12:54:10Z' " +
-				"group by time(1h),hostname",
+				"group by time(1h),hostname order by time",
 		},
 	}
 
@@ -226,7 +226,7 @@ func TestMaxAllCPU(t *testing.T) {
 				"from cpu " +
 				"where (hostname = 'host_3') and " +
 				"time >= '1970-01-01T00:54:10Z' and time < '1970-01-01T08:54:10Z' " +
-				"group by time(1m)",
+				"group by time(1h) order by time",
 		},
 		{
 			desc:               "5 hosts",
@@ -238,7 +238,7 @@ func TestMaxAllCPU(t *testing.T) {
 				"from cpu " +
 				"where (hostname = 'host_9' or hostname = 'host_5' or hostname = 'host_1' or hostname = 'host_7' or hostname = 'host_2') " +
 				"and time >= '1970-01-01T00:37:12Z' and time < '1970-01-01T08:37:12Z' " +
-				"group by time(1m)",
+				"group by time(1h) order by time",
 		},
 	}
 
