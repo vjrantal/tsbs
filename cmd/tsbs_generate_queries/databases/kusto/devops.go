@@ -3,6 +3,7 @@ package kusto
 import (
 	"fmt"
 	"net/url"
+	"os"
 	"strings"
 	"time"
 
@@ -168,8 +169,13 @@ func (d *Devops) HighCPUForHosts(qi query.Query, nHosts int) {
 
 func (d *Devops) fillInQuery(qi query.Query, humanLabel, humanDesc, kql string) {
 	v := url.Values{}
-	kql = "set notruncation;let cpu = CpuMetrics_v2;" + kql
+	kql = "set notruncation;" + kql
+	tableName, tableNameExists := os.LookupEnv("KUSTO_TABLE_NAME")
+	if tableNameExists {
+		kql = "let cpu =" + tableName + ";" + kql
+	}
 	v.Set("csl", kql)
+	v.Set("properties", "{'Options':{'queryconsistency':'weakconsistency'}}")
 	q := qi.(*query.HTTP)
 	q.HumanLabel = []byte(humanLabel)
 	q.HumanDescription = []byte(humanDesc)
